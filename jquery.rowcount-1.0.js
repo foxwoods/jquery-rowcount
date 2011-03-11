@@ -14,7 +14,11 @@
  *   
  *   1.0 July 6, 2010
  *    - Initial development & release
+ *
+ *   1.1 Mar 11, 2011
+ *    - fixed performance issue, which could cause 100% CPU usage in IE6
  */
+
 (function($){    
 	
     $.fn.rowCount = function(options) {
@@ -30,19 +34,10 @@
 		var exist = $(this).find("th.rowCount").length;
 		
 		if (exist) {
-			for (var i = 1; i <= numRows; i++) {
-				var rowNum = options.startAt + i - 1;
-				$(this).find("tbody > tr:nth-child(" + i + ") td:nth-child(" + options.column + ")").html(rowNum + ".");
-			}
-		}
-		else {
-					
-			$(this).find("tr:first th:nth-child(" + options.column + ")").before("<th class='rowCount'>#</th>");			
-			
-			for (var i = 1; i <= numRows; i++) {
-				var rowNum = options.startAt + i - 1;
-				$(this).find("tbody > tr:nth-child(" + i + ") td:nth-child(" + options.column + ")").before("<td class='rowNumber'>" + rowNum + ".&nbsp;</td>");
-			}
+			$(this).find('tbody > tr td:nth-child(' + options.column + ')').map(function(i, e){$(e).html(i + options.startAt)});
+		} else {
+			$(this).find('tr:first th:nth-child(' + options.column + ')').before('<th class="rowCount">#</th>');			
+			$(this).find('tbody > tr td:nth-child(' + options.column + ')').map(function(i, e){$(e).before('<td class="rowNumber">' + (i + options.startAt) + '.</td>')});
 		}
 	};
 })(jQuery);
